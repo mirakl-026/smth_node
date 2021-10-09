@@ -1,27 +1,49 @@
 // Модуль http
 const http = require("http");
 
-// позволяет создавать сервер
-// к прмеру в php сервер не создаётся, там за это отвечают
-// nginx и apache
 
-// в Node нужно создать и настраивать свой сервер
 
-// в аргумент передаётся хэндлер с двумя параметрами
-// запрос и ответ
 const server = http.createServer((req, res) => {
-    console.log(req.url);   // / - корень
+    if(req.method === "GET") {
+        // указываем content type
+        res.writeHead(200, {
+            "Content-Type":"text/html"  // тип контента - то как браузер воспринимает ответ
+        });
 
-    res.write("<h1>hello from NodeJS</h1>"); 
-    res.write("<p>test message</p>");       // но у заголовков нет content-type
-    res.end(`
-        <div style="background: red; width: 200px; height: 200px;">
-            <h3>Test</h3>
-        <div>
-    `);  // обязательно закрыть ответ
+        res.end(`
+            <h1>Form</h1>
+            <form method="post" action="/">
+                <input name="title" type="text" />
+                <button type="submit">Send</button>
+            </form>
+        `);
+    } else if (req.method === "POST") {
+        // echo
+        // получим сообщение пользователя
+        const body = [];    // тело запроса - массив 
+        res.writeHead(200, {
+            "Content-Type": "text/html; charset=utf-8" // тип ответа и кодировка
+        });
+        // chunk - порция данных/параметров
+        // req - наследник EventEmitter, у него есть событие data - Buffer, тот самый
+        req.on("data", (data) => {
+            body.push(Buffer.from(data));   // записываем данные в массив
+        });
+
+        // по завершению передачи все данные будут в массиве body
+        req.on("end", () => {
+            //console.log(body.toString()); // title=Jeka
+            const message = body.toString().split("=")[1];
+
+            res.end(`
+                <h1>Ваше сообщение: ${message} </h1>
+            `);
+
+        });
+    }
 });
 
-// запуск сервера на порту 3000, и колбэк запуска
+
 server.listen(3000, () => {
     console.log("Server is running...")
 });
