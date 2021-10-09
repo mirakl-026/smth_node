@@ -80,3 +80,12 @@
 10. Модуль Events
 
 11. Модуль http (в index.js)
+
+12. Чтобы не перезапускать сервер 100000 раз можно использовать nodemon
+    В package.json добавляются скрипты
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js"
+    },
+
+    и тогда запускаем не node index.js а npm run dev

@@ -16,7 +16,7 @@ const server = http.createServer((req, res) => {
     res.write("<p>test message</p>");       // но у заголовков нет content-type
     res.end(`
         <div style="background: red; width: 200px; height: 200px;">
-            <h2>Test</h2>
+            <h3>Test</h3>
         <div>
     `);  // обязательно закрыть ответ
 });
