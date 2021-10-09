@@ -1,6 +1,11 @@
 const express = require("express");
 const exphbs = require("express-handlebars");
 
+// роуты
+const homeRoutes = require("./routes/home");
+const addRoutes = require("./routes/add");
+const coursesRoutes = require("./routes/cources");
+
 const app = express();
 
 // конфигурация handlebars
@@ -17,32 +22,10 @@ app.set("views", "views");  // папки представлений и шабл
 
 // регистрация папки public как статической
 app.use(express.static("public"));
-
-
-
-// обработка запросов
-app.get("/", (req, res) => {
-    res.render("index", {
-        title: "Главная страница",  // заголовок
-        isHome: true    // активная страница
-    });
-});
-
-app.get("/add", (req, res) =>{
-    res.render("add", {
-        title: "Добавить курс",
-        isAdd: true
-    });
-});
-
-app.get("/cources", (req, res) =>{
-    res.render("cources", {
-        title: "Курсы",
-        isCources: true
-    });
-});
-
-
+// префиксы первым параметром
+app.use("/", homeRoutes); // подключаем роуты в конвейер
+app.use("/add", addRoutes);
+app.use("/cources", coursesRoutes);
 
 
 
