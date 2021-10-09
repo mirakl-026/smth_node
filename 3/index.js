@@ -22,6 +22,9 @@ app.set("views", "views");  // папки представлений и шабл
 
 // регистрация папки public как статической
 app.use(express.static("public"));
+
+app.use(express.urlencoded({extended: true}));
+
 // префиксы первым параметром
 app.use("/", homeRoutes); // подключаем роуты в конвейер
 app.use("/add", addRoutes);
