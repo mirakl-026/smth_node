@@ -1,10 +1,25 @@
 const express = require("express");
-
-// объект app - аналог объекта server, у него можно вызвать Listen
+const path = require("path");
 const app = express();
 
-const PORT = process.env.PORT || 3000;  // либо указанный порт, либо 3000
+// обработка запросов
+app.get("/", (req, res) => {
+    res.status(200);
+    res.sendFile(path.join(__dirname, "views", "index.html"));
+
+});
+
+app.get("/about", (req, res) =>{
+    res.sendFile(path.join(__dirname, "views", "about.html"));
+})
+
+
+
+
+
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}...`);
 });
+
