@@ -272,3 +272,5 @@ _. в package.json есть секция scipts - автоматизация п�
     app.use(express.static("public"));
 
     use - middleware
+
+23. Рендеринг данных

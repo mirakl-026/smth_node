@@ -22,13 +22,26 @@ app.use(express.static("public"));
 
 // обработка запросов
 app.get("/", (req, res) => {
-    res.render("index");    // название страницы hbs для рендера
-
+    res.render("index", {
+        title: "Главная страница",  // заголовок
+        isHome: true    // активная страница
+    });
 });
 
-app.get("/about", (req, res) =>{
-    res.render("about");
+app.get("/add", (req, res) =>{
+    res.render("add", {
+        title: "Добавить курс",
+        isAdd: true
+    });
 });
+
+app.get("/cources", (req, res) =>{
+    res.render("cources", {
+        title: "Курсы",
+        isCources: true
+    });
+});
+
 
 
 
