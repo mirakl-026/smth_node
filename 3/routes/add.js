@@ -13,7 +13,7 @@ router.post("/", (req, res) => {
     console.log(req.body);
 
     // редирект
-    res.redirect("/cources");
+    res.redirect("/courses");
 });
 
 

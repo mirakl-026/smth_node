@@ -4,7 +4,7 @@ const exphbs = require("express-handlebars");
 // роуты
 const homeRoutes = require("./routes/home");
 const addRoutes = require("./routes/add");
-const coursesRoutes = require("./routes/cources");
+const coursesRoutes = require("./routes/courses");
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use(express.urlencoded({extended: true}));
 // префиксы первым параметром
 app.use("/", homeRoutes); // подключаем роуты в конвейер
 app.use("/add", addRoutes);
-app.use("/cources", coursesRoutes);
+app.use("/courses", coursesRoutes);
 
 
 
