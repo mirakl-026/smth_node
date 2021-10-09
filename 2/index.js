@@ -1,20 +1,30 @@
-// console.log("Hi");
-// console.log(__dirname);
-// console.log(__filename);
+// Модуль http
+const http = require("http");
 
-const u = require("./user");
+// позволяет создавать сервер
+// к прмеру в php сервер не создаётся, там за это отвечают
+// nginx и apache
 
-console.log(u); // { name: 'Elena', age: 25 }
-u.sayHello();
+// в Node нужно создать и настраивать свой сервер
 
-// в JS есть функции которые вызывают сами себя
-(function(require, module, exprots, __filename, __dirname){
+// в аргумент передаётся хэндлер с двумя параметрами
+// запрос и ответ
+const server = http.createServer((req, res) => {
+    console.log(req.url);   // / - корень
 
-})();   // любой файл ля nodejs - nodejs оборачивает в такую функцию каждый модуль и получается
-// так:
-// (function(require, module, exprots, __filename, __dirname){
-//     const u = require("./user");
+    res.write("<h1>hello from NodeJS</h1>"); 
+    res.write("<p>test message</p>");       // но у заголовков нет content-type
+    res.end(`
+        <div style="background: red; width: 200px; height: 200px;">
+            <h2>Test</h2>
+        <div>
+    `);  // обязательно закрыть ответ
+});
 
-//     console.log(u); // { name: 'Elena', age: 25 }
-//     u.sayHello();
-// })(); 
+// запуск сервера на порту 3000, и колбэк запуска
+server.listen(3000, () => {
+    console.log("Server is running...")
+});
+
+
+
