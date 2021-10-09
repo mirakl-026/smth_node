@@ -14,6 +14,12 @@ app.engine("hbs", hbs.engine);  // есть такой движок
 app.set("view engine", "hbs");  // регестрируем
 app.set("views", "views");  // папки представлений и шаблонов
 
+
+// регистрация папки public как статической
+app.use(express.static("public"));
+
+
+
 // обработка запросов
 app.get("/", (req, res) => {
     res.render("index");    // название страницы hbs для рендера
