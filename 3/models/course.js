@@ -34,8 +34,8 @@ class Course {
                         resolve();
                     }
                 }
-            )
-        })
+            );
+        });
     }
 
 
@@ -51,7 +51,7 @@ class Course {
                         resolve(JSON.parse(content));
                     }    
                 }
-            )
+            );
         });
     }
 }
