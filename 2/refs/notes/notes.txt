@@ -1,0 +1,2 @@
+Hello from NodeJS - FS
+From append: node node node!
