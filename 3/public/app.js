@@ -1,11 +1,16 @@
 // клиентский скрпит
 
-// для каждого 
-document.querySelectorAll('.price').forEach( node =>{
-    node.textContent = new Intl.NumberFormat("ru-RU", {
+const toCurrency = price => {
+    return  new Intl.NumberFormat("ru-RU", {
         currency: "rub",
         style: "currency"
-    }).format(node.textContent);
+    }).format(price);
+}
+
+
+// для каждого 
+document.querySelectorAll('.price').forEach( node =>{
+    node.textContent = toCurrency(node.textContent);
 });
 
 // динамическое удаление из корзины
@@ -22,7 +27,28 @@ if ($cart) {
             })
             .then( res => res.json())
             .then( cart => {
-                console.log(cart);
+                
+                if (cart.courses.length) {
+                    const html = cart.courses.map(c => {
+                        return `
+                        <tr>
+                            <td>${c.title}</td>
+                            <td>${c.count}</td>
+                            <td>
+                                <button class="btn btn-small js-remove" data-id="${c.id}">Удалить</button>
+                            </td>
+                        </tr>
+                        `
+                    }).join(" ");
+
+                    $cart.querySelector("tbody").innerHTML = html;
+
+                    $cart.querySelector(".price").textContent = toCurrency(cart.price);
+
+
+                } else {
+                    $cart.innerHTML = "<p>Корзина пуста</p>";
+                }
             });
         }
     });
