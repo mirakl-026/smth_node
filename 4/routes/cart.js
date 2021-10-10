@@ -8,7 +8,7 @@ function mapCartItems(cart) {
         title: c.courseId.title,
         count: c.count,
         price: c.courseId.price,
-        _id: c.courseId._id,
+        id: c.courseId._id,
         img: c.courseId.img,
         userId: c.courseId.userId
     }))

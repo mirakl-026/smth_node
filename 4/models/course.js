@@ -3,7 +3,7 @@
 
 const { Schema, model } = require("mongoose");
 
-const course = new Schema({
+const courseSchema = new Schema({
     // поля в модели
     title: {
         type: String,
@@ -24,5 +24,17 @@ const course = new Schema({
 });
 // id по умолчанию сам монгуз добавит
 
+
+// courseSchema.method("toClient", function() {
+//     const course = this.toObject();
+
+//     course.id = course._id;
+
+//     delete course._id;
+
+//     return course;
+// });
+
+
 // название модели + схема
-module.exports = model("Course", course);
+module.exports = model("Course", courseSchema);
