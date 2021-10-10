@@ -62,4 +62,31 @@ userSchema.methods.addToCart = function(course) {
     return this.save();
 }
 
+
+
+
+
+// удаление из корзины
+userSchema.methods.removeFromCart = function(id) {
+    let items = [...this.cart.items]; // клонирование
+
+    const idx = items.findIndex(c => {
+        return c.courseId.toString() === id.toString();
+    });
+
+    if (items[idx].count === 1) {
+        //удалить
+        items = items.filter(c => c.courseId.toString() !== id.toString());
+
+    } else {
+        // больше 
+        items[idx].count--;
+    }
+
+    this.cart = {items};
+    return this.save();
+}
+
+
+
 module.exports = model("User", userSchema);
