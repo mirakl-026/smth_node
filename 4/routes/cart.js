@@ -3,6 +3,20 @@ const Course = require("../models/course");
 
 const router = Router();
 
+function mapCartItems(cart) {
+    return cart.items.map(c => ({
+        title: c.courseId.title,
+        count: c.count,
+        price: c.courseId.price
+    }))
+}
+
+function computePrice(courses) {
+    return courses.reduce((total, course) => {
+        return total += course.count * course.price;
+    }, 0);
+}
+
 // теперь корзина привязана к пользователю
 
 router.post("/add", async (req, res) => {
@@ -15,12 +29,16 @@ router.post("/add", async (req, res) => {
 
 
 router.get("/", async (req, res) => {
-    const cart = await Cart.fetch();
+    const user = await req.user
+    .populate("cart.items.courseId");
+
+    const courses = mapCartItems(user.cart);
+
     res.render("cart", {
         title: "Корзина",
         isCart: true,
-        courses: cart.courses,
-        price: cart.price
+        courses: courses,
+        price: computePrice(courses)
     })
 });
 
