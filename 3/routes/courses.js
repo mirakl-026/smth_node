@@ -14,6 +14,25 @@ router.get("/", async (req, res) =>{
     });
 });
 
+router.get("/:id/edit", async (req, res) =>{
+    if (!req.query.allow) {     // allow - query параметр, отвечающий за возможность редактирования
+        return res.redirect("/");       
+    }
+
+    const course = await Course.getById(req.params.id);
+
+    res.render("course-edit", {
+        // title: `Редактировать ${course.title}`,
+        course
+    });
+});
+
+router.post("/edit", async (req, res) => {
+    await Course.update(req.body);
+
+    res.redirect("/courses");
+});
+
 router.get("/:id", async (req, res) => {
     const course = await Course.getById(req.params.id);
 
@@ -23,5 +42,6 @@ router.get("/:id", async (req, res) => {
         course
     });
 });
+
 
 module.exports = router;
