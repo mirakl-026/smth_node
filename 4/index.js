@@ -34,6 +34,9 @@ app.use("/courses", coursesRoutes);
 app.use("/cart", cartRoutes);
 
 
+// pass от Atlasa
+// url - connection string
+
 
 
 const PORT = process.env.PORT || 3000;
