@@ -1,5 +1,8 @@
 const express = require("express");
+
+const Handlebars = require('handlebars');
 const exphbs = require("express-handlebars");
+const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access');
 
 // роуты
 const homeRoutes = require("./routes/home");
@@ -11,16 +14,19 @@ const path = require("path");
 // подключаем mongoose
 const mongoose = require("mongoose");
 
+
+
 const app = express();
 
 // конфигурация handlebars
-const hbs = exphbs.create({
+// регистрация движка рендеринга
+app.engine('hbs', exphbs({
+    handlebars: allowInsecurePrototypeAccess(Handlebars),
     defaultLayout: "main",
     extname: "hbs"
-});
+}));  // есть такой движок
 
-// регистрация движка рендеринга
-app.engine("hbs", hbs.engine);  // есть такой движок
+
 app.set("view engine", "hbs");  // регестрируем
 app.set("views", "views");  // папки представлений и шаблонов
 
