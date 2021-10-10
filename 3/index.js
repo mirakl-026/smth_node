@@ -6,6 +6,7 @@ const homeRoutes = require("./routes/home");
 const addRoutes = require("./routes/add");
 const coursesRoutes = require("./routes/courses");
 const cartRoutes = require("./routes/cart");
+const path = require("path");
 
 const app = express();
 
@@ -22,7 +23,7 @@ app.set("views", "views");  // папки представлений и шабл
 
 
 // регистрация папки public как статической
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(express.urlencoded({extended: true}));
 
