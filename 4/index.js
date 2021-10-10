@@ -8,6 +8,9 @@ const coursesRoutes = require("./routes/courses");
 const cartRoutes = require("./routes/cart");
 const path = require("path");
 
+// подключаем mongoose
+const mongoose = require("mongoose");
+
 const app = express();
 
 // конфигурация handlebars
@@ -34,14 +37,25 @@ app.use("/courses", coursesRoutes);
 app.use("/cart", cartRoutes);
 
 
-// pass от Atlasa
+const PORT = process.env.PORT || 3000;
+
+// pass от Atlas
 // url - connection string
 
+async function start() {
+    try {
+        await mongoose.connect("mongodb://127.0.0.1:27017/app_courses");   
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
 
-
-const PORT = process.env.PORT || 3000;
+start();
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}...`);
 });
+
+
 
