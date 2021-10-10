@@ -15,7 +15,12 @@ const course = new Schema({
         required: true
     },
 
-    img: String
+    img: String,
+
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    }
 });
 // id по умолчанию сам монгуз добавит
 
