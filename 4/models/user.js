@@ -29,4 +29,37 @@ const userSchema = new Schema({
     }
 });
 
+// обязательно function - потому что this,
+// в стрелочной функции this нет
+userSchema.methods.addToCart = function(course) {
+    // клонирование
+    const clonedItems = this.cart.items.concat();
+
+    const idx = clonedItems.findIndex( c => {
+        // courseId - объект, поэтому приведение к строке
+        return c.courseId.toString() === course._id.toString()
+    });
+
+    // если idx найден, увиличиваем кол-во, если нет - добавляем
+    if (idx >= 0) {
+        clonedItems[idx].count = clonedItems[idx].count + 1;
+    } else {
+        clonedItems.push({
+            count: 1,
+            courseId: course._id
+        })
+    }
+    // формирование новой корзины
+    const newCart = {items: clonedItems};
+    // замена
+    this.cart = newCart;
+
+    // либо так
+    // this.cart = {items: clonedItems};
+    // либо если clonedItems назывался бы items можно было так:
+    // this.cart = {items}
+
+    return this.save();
+}
+
 module.exports = model("User", userSchema);
