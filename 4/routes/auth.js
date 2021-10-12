@@ -7,9 +7,21 @@ router.get("/login", async (req, res) => {
         title: "Авторизация",
         isLogin: true
     })
-})
+});
 
 
+router.post("/login", async (req, res) => {
+    
+    req.session.isAthenticated = true;
 
+    res.redirect("/");
+});
+
+router.get("/logout", async (req, res) => {
+    req.session.destroy(()=>{
+
+        res.redirect("/auth/login#login");
+    });
+});
 
 module.exports = router;

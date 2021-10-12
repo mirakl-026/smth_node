@@ -12,8 +12,12 @@ const cartRoutes = require("./routes/cart");
 const ordersRoutes = require("./routes/orders");
 const authRoutes = require("./routes/auth");
 
-const path = require("path");
+// сессия
+const session = require("express-session");
+const varMiddleware = require("./middleware/variables");
 
+
+const path = require("path");
 const User = require("./models/user");
 
 // подключаем mongoose
@@ -53,6 +57,17 @@ app.use(async (req, res, next) => {
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(express.urlencoded({extended: true}));
+
+// настройка сессии
+app.use(session({
+    secret: "lumber0jack2",
+    resave: false,
+    saveUninitialized: false
+}));
+// теперь мы можем обращаться к объекту request.session и 
+// выполнять какой-то функционал
+app.use(varMiddleware);
+
 
 // префиксы первым параметром
 app.use("/", homeRoutes); // подключаем роуты в конвейер
