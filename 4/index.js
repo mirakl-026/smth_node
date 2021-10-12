@@ -14,11 +14,14 @@ const authRoutes = require("./routes/auth");
 
 // сессия
 const session = require("express-session");
+const MongoStore = require("connect-mongodb-session")(session);
 const varMiddleware = require("./middleware/variables");
 
 
+const MONGODB_URI = "mongodb://127.0.0.1:27017/app_courses";
+
 const path = require("path");
-const User = require("./models/user");
+// const User = require("./models/user");
 
 // подключаем mongoose
 const mongoose = require("mongoose");
@@ -36,6 +39,11 @@ app.engine('hbs', exphbs({
 }));  // есть такой движок
 
 
+const store = new MongoStore({
+    collection: "sessions",
+    uri: MONGODB_URI
+});
+
 app.set("view engine", "hbs");  // регестрируем
 app.set("views", "views");  // папки представлений и шаблонов
 
@@ -49,7 +57,8 @@ app.use(express.urlencoded({extended: true}));
 app.use(session({
     secret: "lumber0jack2",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    store: store
 }));
 // теперь мы можем обращаться к объекту request.session и 
 // выполнять какой-то функционал
@@ -72,20 +81,8 @@ const PORT = process.env.PORT || 3000;
 
 async function start() {
     try {
-        await mongoose.connect("mongodb://127.0.0.1:27017/app_courses");   
-        
-        // // проверка на наличие хотя-бы одного пользователя (временно)
-        // const candidate = await User.findOne();
-        // if(!candidate) {
-        //     const user = new User({
-        //         email: "jeka@mail.ru",
-        //         name: "Jeka",
-        //         cart:{ 
-        //             items:[]
-        //         }
-        //     });
-        //     await user.save();
-        // }        
+        await mongoose.connect(MONGODB_URI);   
+  
 
 
         app.listen(PORT, () => {
