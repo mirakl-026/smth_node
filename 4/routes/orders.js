@@ -10,14 +10,20 @@ router.get("/", async (req,res) =>{
             "user.userId": req.user._id
         }).populate("user.userId");
 
-        
+        // console.log(orders);
+
 
         res.render("orders", {
             isOrder: true,
             title: "Заказы",
             orders: orders.map( o => {
+                //console.log(o);
                 return {
-                    ...o,
+                    //...o,
+                    user: o.user,
+                    _id: o._id,
+                    courses: o.courses,
+                    date: o.date,
                     price: o.courses.reduce((total, c) => {
                         return total += c.count* c.course.price
                     },0)
