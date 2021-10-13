@@ -4,6 +4,7 @@ const Handlebars = require('handlebars');
 const exphbs = require("express-handlebars");
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access');
 
+const csurf = require("csurf");
 // роуты
 const homeRoutes = require("./routes/home");
 const addRoutes = require("./routes/add");
@@ -61,6 +62,9 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }));
+// CSRF защита сразу после сессии
+app.use(csurf());
+
 // теперь мы можем обращаться к объекту request.session и 
 // выполнять какой-то функционал
 app.use(varMiddleware);
