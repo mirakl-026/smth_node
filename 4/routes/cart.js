@@ -24,9 +24,7 @@ function computePrice(courses) {
 
 router.post("/add", auth, async (req, res) => {
     const course = await Course.findById(req.body.id);
-
     await req.user.addToCart(course);
-
     res.redirect("/cart");
 });
 
