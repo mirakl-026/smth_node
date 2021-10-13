@@ -16,6 +16,7 @@ const authRoutes = require("./routes/auth");
 const session = require("express-session");
 const MongoStore = require("connect-mongodb-session")(session);
 const varMiddleware = require("./middleware/variables");
+const userMiddleware = require("./middleware/user");
 
 
 const MONGODB_URI = "mongodb://127.0.0.1:27017/app_courses";
@@ -63,6 +64,8 @@ app.use(session({
 // теперь мы можем обращаться к объекту request.session и 
 // выполнять какой-то функционал
 app.use(varMiddleware);
+app.use(userMiddleware);
+
 
 
 // префиксы первым параметром
@@ -81,8 +84,10 @@ const PORT = process.env.PORT || 3000;
 
 async function start() {
     try {
-        await mongoose.connect(MONGODB_URI);   
-  
+        await mongoose.connect(MONGODB_URI, {
+            useNewUrlParser: true,
+            // useFindAndModify: false
+          });  
 
 
         app.listen(PORT, () => {

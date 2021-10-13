@@ -1,6 +1,5 @@
 const {Router} = require("express");
 const User = require("../models/user");
-
 const router = Router();
 
 router.get("/login", async (req, res) => {
@@ -14,7 +13,7 @@ router.get("/login", async (req, res) => {
 router.post("/login", async (req, res) => {
     const user = await User.findById("616312d61ab62494fdc146ef");
     req.session.user = user;
-    req.session.isAthenticated = true;
+    req.session.isAuthenticated = true;
 
     req.session.save(err => {
         if (err)
