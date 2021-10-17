@@ -19,8 +19,9 @@ const MongoStore = require("connect-mongodb-session")(session);
 const varMiddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
 
+const keys = require("./keys/index");
 
-const MONGODB_URI = "mongodb://127.0.0.1:27017/app_courses";
+
 
 const path = require("path");
 // const User = require("./models/user");
@@ -44,7 +45,7 @@ app.engine('hbs', exphbs({
 
 const store = new MongoStore({
     collection: "sessions",
-    uri: MONGODB_URI
+    uri: keys.MONGODB_URI
 });
 
 app.set("view engine", "hbs");  // регестрируем
@@ -58,7 +59,7 @@ app.use(express.urlencoded({extended: true}));
 
 // настройка сессии
 app.use(session({
-    secret: "lumber0jack2",
+    secret: keys.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: store
@@ -92,7 +93,7 @@ const PORT = process.env.PORT || 3000;
 
 async function start() {
     try {
-        await mongoose.connect(MONGODB_URI, {
+        await mongoose.connect(keys.MONGODB_URI, {
             useNewUrlParser: true,
             // useFindAndModify: false
           });  
