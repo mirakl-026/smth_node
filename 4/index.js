@@ -22,6 +22,7 @@ const mongoose = require("mongoose");
 const varMiddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
 const error404Middleware = require("./middleware/error404");
+const fileMiddleware = require("./middleware/file");
 const csurf = require("csurf");
 const flash = require("connect-flash");
 
@@ -66,6 +67,9 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }));
+// валидация файлов
+app.use(fileMiddleware.single("avatar"));
+
 // CSRF защита сразу после настройки сессии
 app.use(csurf({}));
 
