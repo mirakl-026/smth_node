@@ -2,6 +2,7 @@ const {Router} = require("express");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const {body, validationResult} = require("express-validator/check");
 const nodemailer = require("nodemailer");
 const keys = require("../keys/index");
 const regEmail = require("../emails/registration");
@@ -14,15 +15,7 @@ const router = Router();
 
 
 //создаём транспортёр для отправки соообщений
-const transporter = nodemailer.createTransport({
-    host: 'smtp.yandex.ru',
-    port: 465 ,
-    secure: true,
-    auth: {
-      user: "mirakl026@yandex.ru",
-      pass: "wJNCNJTz!Up5-iA",
-    },
-});
+const transporter = nodemailer.createTransport(keys.MAIL_HOST);
 
 // sgMail.setApiKey(keys.SENDGRID_API_KEY);
 
@@ -79,10 +72,17 @@ router.get("/logout", async (req, res) => {
 });
 
 
-router.post("/register", async (req, res) => {
+router.post("/register", body("email").isEmail(), async (req, res) => {
     try {
         // регистрируем нового пользователя
         const {email, password, confirm, name} = req.body;
+
+        // валидация
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            req.flash("registerError", errors.array()[0].msg);
+            return res.status(422).redirect("/auth/login#register"); // ошибки валидации
+        }
 
         // сещствует ли такой пользователь?
         const candidate = await User.findOne({email});
