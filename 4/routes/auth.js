@@ -76,7 +76,7 @@ router.get("/logout", async (req, res) => {
 router.post("/register", registerValidators, async (req, res) => {
     try {
         // регистрируем нового пользователя
-        const {email, password, confirm, name} = req.body;
+        const {email, password, name} = req.body;
 
         // валидация
         const errors = validationResult(req);
@@ -85,45 +85,20 @@ router.post("/register", registerValidators, async (req, res) => {
             return res.status(422).redirect("/auth/login#register"); // ошибки валидации
         }
 
-        // сещствует ли такой пользователь?
-        const candidate = await User.findOne({email});
-        if (candidate) {
-            req.flash("registerError", "Пользователь с таким email существует");
-            
-            res.redirect("/auth/login#register");
-        } else {
-            // создаём пользователя
+        // создаём пользователя
 
-            // шифрованный пароль
-            const hashPassword = await bcrypt.hash(password, 10);
+        // шифрованный пароль
+        const hashPassword = await bcrypt.hash(password, 10);
 
-            const user = new User({
-                email, name, password: hashPassword, cart: {items: []}
-            })
-            await user.save();
+        const user = new User({
+            email, name, password: hashPassword, cart: {items: []}
+        })
+        await user.save();
 
-            // отправка письма
-            res.redirect("/auth/login#login");
-                        
-            await transporter.sendMail(regEmail(email));
-            
-            // try {
-            //     await sgMail.send({
-            //         to: email,
-            //         from: 'evgeniy.pgm@inbox.ru', // Use the email address or domain you verified above
-            //         subject: 'Sending with Twilio SendGrid is Fun',
-            //         text: 'and easy to do anywhere, even with Node.js',
-            //         html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-            //     });
-
-            // } catch (error) {
-            //     console.error(error);
-            
-            //     if (error.response) {
-            //         console.error(error.response.body)
-            //     }
-            // }
-        }
+        // отправка письма
+        res.redirect("/auth/login#login");
+                    
+        await transporter.sendMail(regEmail(email));        
 
     } catch (e) {
         console.log(e);
