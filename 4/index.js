@@ -26,6 +26,7 @@ const path = require("path");
 // const User = require("./models/user");
 
 // подключаем mongoose
+const flash = require("connect-flash");
 const mongoose = require("mongoose");
 
 
@@ -64,6 +65,9 @@ app.use(session({
 }));
 // CSRF защита сразу после сессии
 app.use(csurf());
+
+// 
+app.use(flash());
 
 // теперь мы можем обращаться к объекту request.session и 
 // выполнять какой-то функционал
