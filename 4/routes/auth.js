@@ -1,8 +1,26 @@
 const {Router} = require("express");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
+// const sendgrid = require("nodemailer-sendgrid-transport");
+const keys = require("../keys/index");
+const regEmail = require("../emails/registration");
+
+// const sgMail = require('@sendgrid/mail');
 
 const router = Router();
+
+
+// создаём транспортёр для отправки соообщений
+const transporter = nodemailer.createTransport({
+    host: 'smtp.yandex.ru',
+    port: 465 ,
+    secure: true,
+    auth: {
+      user: "mirakl026@yandex.ru",
+      pass: "wJNCNJTz!Up5-iA",
+    },
+})
 
 router.get("/login", async (req, res) => {
     res.render("auth/login", {
@@ -78,7 +96,18 @@ router.post("/register", async (req, res) => {
                 email, name, password: hashPassword, cart: {items: []}
             })
             await user.save();
+
+            // отправка письма
             res.redirect("/auth/login#login");
+            
+            await transporter.sendMail({
+                from: "mirakl026@yandex.ru",
+                to: email,
+                subject: 'Message from Node js',
+                text: 'This message was sent from Node js server.',
+                html:
+                  'This <i>message</i> was sent from <strong>Node js</strong> server.',
+            });
         }
 
     } catch (e) {
