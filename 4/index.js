@@ -20,6 +20,7 @@ const mongoose = require("mongoose");
 
 const varMiddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
+const error404Middleware = require("./middleware/error404");
 const csurf = require("csurf");
 const flash = require("connect-flash");
 
@@ -84,6 +85,9 @@ app.use("/courses", coursesRoutes);
 app.use("/cart", cartRoutes);
 app.use("/orders", ordersRoutes);
 app.use("/auth", authRoutes);
+
+// обработку 404 - только в самом конце
+app.use(error404Middleware);
 
 
 const PORT = process.env.PORT || 3000;
