@@ -1,11 +1,13 @@
 const {Router} = require("express");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-// const sendgrid = require("nodemailer-sendgrid-transport");
 const keys = require("../keys/index");
 const regEmail = require("../emails/registration");
+const resetEmail = require("../emails/reset");
 
+// const sendgrid = require("nodemailer-sendgrid-transport");
 // const sgMail = require('@sendgrid/mail');
 
 const router = Router();
@@ -102,14 +104,7 @@ router.post("/register", async (req, res) => {
             // отправка письма
             res.redirect("/auth/login#login");
                         
-            await transporter.sendMail({
-                from: "mirakl026@yandex.ru",
-                to: email,
-                subject: 'Message from Node js',
-                text: 'This message was sent from Node js server.',
-                html:
-                'This <i>message</i> was sent from <strong>Node js</strong> server.',
-            });
+            await transporter.sendMail(regEmail(email));
             
             // try {
             //     await sgMail.send({
@@ -134,5 +129,48 @@ router.post("/register", async (req, res) => {
     }
 })
 
+
+router.get("/reset", (req,res) =>{
+    res.render("auth/reset", {
+        title: "Сброс пароля",
+        error: req.flash("error")
+    })
+});
+
+router.post("/reset", (req, res) =>{
+    try {
+        // генерируем рандомный ключ
+        crypto.randomBytes(32, async (error, buffer) => {
+            if (error) {
+                req.flash("error", "Что-то пошло не так, повторите попытку позже");
+                return res.redirect("/auth/reset")
+            }
+
+            // получаем токен
+            const token = buffer.toString('hex');
+            // проверка что email, сбрасывающий пароль вообще существует как пользователь
+            const candidate = await User.findOne({email: req.body.email});
+
+            if (candidate) {
+                // отправляем письмо
+                candidate.resetToken = token;
+                candidate.resetTokenExp = Date.now() + 60*60*1000;  // жизнь токена 1 час
+                await candidate.save();
+
+                await transporter.sendMail(resetEmail(candidate.email, token));
+
+                res.redirect("/auth/login");
+
+            } else {
+                req.flash("error", "Пользователя с таким email нет");
+                res.redirect("/auth/reset");
+            }
+
+        })
+
+    } catch (e) {
+        console.log(e);
+    }
+})
 
 module.exports = router;
