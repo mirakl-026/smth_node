@@ -32,5 +32,15 @@ exports.registerValidators = [
         .isLength({min: 3})
         .withMessage("Имя минимум 3 символа")
         .trim()
+]
 
+exports.loginValidators = [
+    body("email")
+        .isEmail()
+        .withMessage("Введите корректный email")
+        .normalizeEmail(),  // санитайзер - приводит к разным регистрам в соответсвии с держателями почты
+    body("password", "Пароль: лат.буквы и цифры")
+        .isLength({min:2, max:56})
+        .isAlphanumeric()
+        .trim(),    // санитайзер - удаляет пробелы по краям
 ]

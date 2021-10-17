@@ -6,7 +6,7 @@ const nodemailer = require("nodemailer");
 const keys = require("../keys/index");
 const regEmail = require("../emails/registration");
 const resetEmail = require("../emails/reset");
-const {registerValidators} = require("../utils/validators");
+const {registerValidators, loginValidators} = require("../utils/validators");
 const {validationResult} = require("express-validator");
 
 // const sendgrid = require("nodemailer-sendgrid-transport");
@@ -30,9 +30,16 @@ router.get("/login", async (req, res) => {
 });
 
 
-router.post("/login", async (req, res) => {
+router.post("/login", loginValidators, async (req, res) => {
     try {
         const {email, password} = req.body;
+
+        // валидация
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            req.flash("loginError", errors.array()[0].msg);
+            return res.status(422).redirect("/auth/login#login"); // ошибки валидации
+        }
 
         // проверка на существование пользователя
         const candidate = await User.findOne({email});
