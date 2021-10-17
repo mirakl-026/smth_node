@@ -58,7 +58,11 @@ const store = new MongoStore({
 
 // регистрация папки public как статической
 app.use(express.static(path.join(__dirname, "public")));
+// папку с картинками делаем публичной
+app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(express.urlencoded({extended: true}));
+
+
 
 // настройка сессии
 app.use(session({
