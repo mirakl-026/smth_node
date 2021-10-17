@@ -1,10 +1,9 @@
+// express и handlebars
 const express = require("express");
-
 const Handlebars = require('handlebars');
 const exphbs = require("express-handlebars");
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access');
 
-const csurf = require("csurf");
 // роуты
 const homeRoutes = require("./routes/home");
 const addRoutes = require("./routes/add");
@@ -12,49 +11,50 @@ const coursesRoutes = require("./routes/courses");
 const cartRoutes = require("./routes/cart");
 const ordersRoutes = require("./routes/orders");
 const authRoutes = require("./routes/auth");
+const path = require("path");
 
-// сессия
+// сессия, Бд и MW
 const session = require("express-session");
 const MongoStore = require("connect-mongodb-session")(session);
-const varMiddleware = require("./middleware/variables");
-const userMiddleware = require("./middleware/user");
-
-const keys = require("./keys/index");
-
-
-
-const path = require("path");
-// const User = require("./models/user");
-
-// подключаем mongoose
-const flash = require("connect-flash");
 const mongoose = require("mongoose");
 
+const varMiddleware = require("./middleware/variables");
+const userMiddleware = require("./middleware/user");
+const csurf = require("csurf");
+const flash = require("connect-flash");
+
+// константы
+const keys = require("./keys/index");
+// const User = require("./models/user");
 
 
+
+
+
+
+//==========================================================================
 const app = express();
 
-// конфигурация handlebars
-// регистрация движка рендеринга
+// конфигурация handlebars и регистрация движка рендеринга
 app.engine('hbs', exphbs({
     handlebars: allowInsecurePrototypeAccess(Handlebars),
     defaultLayout: "main",
-    extname: "hbs"
+    extname: "hbs",
+    helpers: require("./utils/hbs-helpers")
 }));  // есть такой движок
+app.set("view engine", "hbs");  // регестрируем
+app.set("views", "views");  // папки представлений и шаблонов
 
 
+// подключение к MongoDb и ORM Mongoose
 const store = new MongoStore({
     collection: "sessions",
     uri: keys.MONGODB_URI
 });
 
-app.set("view engine", "hbs");  // регестрируем
-app.set("views", "views");  // папки представлений и шаблонов
-
 
 // регистрация папки public как статической
 app.use(express.static(path.join(__dirname, "public")));
-
 app.use(express.urlencoded({extended: true}));
 
 // настройка сессии
@@ -64,10 +64,10 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }));
-// CSRF защита сразу после сессии
-app.use(csurf());
+// CSRF защита сразу после настройки сессии
+app.use(csurf({}));
 
-// 
+// проброс данных обо ошибках в роутинге (для клиента)
 app.use(flash());
 
 // теперь мы можем обращаться к объекту request.session и 
@@ -88,16 +88,13 @@ app.use("/auth", authRoutes);
 
 const PORT = process.env.PORT || 3000;
 
-// pass от Atlas
-// url - connection string
-
+// запуск express + mongoose
 async function start() {
     try {
         await mongoose.connect(keys.MONGODB_URI, {
             useNewUrlParser: true,
             // useFindAndModify: false
           });  
-
 
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}...`);
