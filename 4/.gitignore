@@ -1,5 +1,9 @@
-node_modules
-keys
+/node_modules
+/keys
 2/keys
 3/keys
 4/keys
+/keys/
+2/keys/
+3/keys/
+4/keys/
